@@ -6,8 +6,11 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { NavLink } from "react-router-dom";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const Header = () => {
+  const { loginWithRedirect, isAuthenticated, logout, user } = useAuth0();
+
   return (
     <Navbar bg="dark" variant="dark" expand="lg">
       <Container fluid>
@@ -21,14 +24,25 @@ const Header = () => {
               Home
             </NavLink>
           </Nav>
-          <NavLink to="/login">
-            <Button variant="outline-info" className="me-2">
-              Login
-            </Button>
-          </NavLink>
-          <NavLink to="/register">
-            <Button variant="outline-info">Register</Button>
-          </NavLink>
+          {isAuthenticated && (
+            <li>
+              <p> {user.name} </p>
+            </li>
+          )}
+         
+          {isAuthenticated ? (
+            <li>
+              <Button
+                onClick={() => logout({ returnTo: window.location.origin })}>
+                Log Out
+              </Button>
+            </li>
+          ) : (
+            <li>
+              <Button onClick={() => loginWithRedirect()}>Log In</Button>
+            </li>
+          )}
+
         </Navbar.Collapse>
       </Container>
     </Navbar>
